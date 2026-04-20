@@ -29,3 +29,11 @@ def test_auto_off_after_no_motion_timeout():
     status_payload = status_response.get_json()
     assert status_payload["data"]["power"] == "off"
     assert status_payload["data"]["mode"] == "auto"
+
+
+def test_bridge_motion_requires_detected_boolean_true():
+    client = _make_client()
+    response = client.post("/bridge/motion-event", json={"detected": False})
+    assert response.status_code == 422
+    payload = response.get_json()
+    assert payload["success"] is False
