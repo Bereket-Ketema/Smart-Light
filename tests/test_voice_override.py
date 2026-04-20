@@ -1,4 +1,5 @@
 import os
+import time
 
 from app import create_app
 
@@ -30,3 +31,27 @@ def test_voice_auto_mode_reenables_automation():
     assert auto_response.status_code == 200
     auto_payload = auto_response.get_json()
     assert auto_payload["data"]["state"]["mode"] == "auto"
+
+
+def test_manual_override_expires_back_to_auto():
+    client = _make_client()
+    client.post("/voice/command", json={"command": "light off"})
+
+    time.sleep(2.2)
+    status_response = client.get("/light/status")
+    status_payload = status_response.get_json()
+    assert status_payload["data"]["mode"] == "auto"
+    assert status_payload["data"]["override_until"] is None
+    assert status_payload["data"]["control_source"] == "manual_timeout"
+
+
+def test_manual_on_expires_then_auto_off_runs():
+    client = _make_client()
+    client.post("/voice/command", json={"command": "light on"})
+
+    # 2s manual override + 1s auto-off in test config.
+    time.sleep(3.3)
+    status_response = client.get("/light/status")
+    status_payload = status_response.get_json()
+    assert status_payload["data"]["mode"] == "auto"
+    assert status_payload["data"]["power"] == "off"
