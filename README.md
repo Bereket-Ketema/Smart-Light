@@ -168,9 +168,6 @@ Test files are located in the `tests/` directory.
 4. Run tests
 5. Submit a pull request
 
-## License
-
-[Add license if applicable]
 
 ## API Endpoints
 
