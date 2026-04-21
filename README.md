@@ -1,11 +1,32 @@
 # Smart Light API
 
-Flask backend for the SmartSimLight system with React Native integration support.
+## Overview
+
+The Smart Light API is a Flask-based backend service for managing smart lighting systems. It supports manual control, voice commands, motion detection, and automation features. Designed for integration with React Native mobile apps and external systems via bridge endpoints.
+
+## Features
+
+- Manual light control (on/off)
+- Voice command processing
+- Motion detection and automation
+- Bridge integration for external events
+- Configurable auto-off timers
+- CORS support for web integration
+
+## Architecture
+
+The application follows a modular Flask architecture with the following components:
+
+- **Routes**: API endpoints organized by feature (light, motion, voice, bridge)
+- **Services**: Business logic for automation, light control, motion handling, voice processing
+- **Models**: Data structures for commands, light states, motion events
+- **Utils**: Response helpers and scheduling utilities
+- **State Store**: In-memory state management
 
 ## Project Structure
 
-```text
-smartLight/
+```
+smartLight_py/
 ├── app/
 │   ├── routes/
 │   │   ├── bridge.py
@@ -27,26 +48,129 @@ smartLight/
 │   ├── __init__.py
 │   └── state_store.py
 ├── tests/
+│   ├── __init__.py
+│   ├── test_light_routes.py
+│   ├── test_motion_flow.py
+│   └── test_voice_override.py
 ├── requirements.txt
-├── .env
-├── .gitignore
 ├── run.py
-└── README.md
+├── README.md
+└── READMEAPI.md
 ```
 
-## Quick Start
+## Installation
 
-1. Create a virtual environment.
-2. Install dependencies:
-   `pip install -r requirements.txt`
-3. Run the app:
-   `python run.py`
+### Prerequisites
 
-## Environment Variables
+- Python 3.8+
+- pip
 
-- `AUTO_OFF_SECONDS` default: `10`
-- `DEFAULT_MODE` default: `auto`
-- `MANUAL_OVERRIDE_SECONDS` default: `30`
+### Setup
+
+1. Clone the repository:
+
+   ```bash
+   git clone <repository-url>
+   cd smartLight_py
+   ```
+
+2. Create a virtual environment:
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Configuration
+
+The application uses environment variables for configuration:
+
+- `AUTO_OFF_SECONDS`: Time in seconds before auto-off (default: 10)
+- `DEFAULT_MODE`: Default operation mode (default: "auto")
+- `MANUAL_OVERRIDE_SECONDS`: Manual override duration (default: 30)
+
+Create a `.env` file in the root directory to set these variables.
+
+## Usage
+
+### Running the Application
+
+```bash
+python run.py
+```
+
+The server will start on `http://127.0.0.1:5000`.
+
+### Health Check
+
+```bash
+curl http://127.0.0.1:5000/
+```
+
+## API Documentation
+
+### Endpoints
+
+#### Light Control
+
+- `GET /light/status`: Get current light status
+- `POST /light/on`: Turn light on
+- `POST /light/off`: Turn light off
+
+#### Voice Commands
+
+- `POST /voice/command`: Process voice command (JSON: `{"command": "string"}`)
+
+#### Motion
+
+- `POST /motion/simulate`: Simulate motion detection (JSON: `{"detected": boolean}`)
+
+#### Bridge
+
+- `POST /bridge/motion-event`: Handle bridge motion event (JSON: `{"detected": boolean}`)
+
+For detailed cURL examples, see [READMEAPI.md](READMEAPI.md).
+
+## Models
+
+- **Command**: Represents voice commands
+- **LightState**: Current state of the light (on/off, mode)
+- **MotionEvent**: Motion detection events
+
+## Services
+
+- **AutomationService**: Handles auto-off timers and mode switching
+- **LightService**: Manages light state and control
+- **MotionService**: Processes motion events
+- **VoiceService**: Interprets voice commands
+
+## Testing
+
+Run tests with pytest:
+
+```bash
+pytest
+```
+
+Test files are located in the `tests/` directory.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make changes
+4. Run tests
+5. Submit a pull request
+
+## License
+
+[Add license if applicable]
 
 ## API Endpoints
 
