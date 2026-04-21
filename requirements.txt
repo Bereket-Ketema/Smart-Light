@@ -2,3 +2,8 @@ Flask
 python-dotenv
 Flask-Cors
 pytest
+Flask
+Flask-CORS
+SpeechRecognition
+PyAudio
+requests
