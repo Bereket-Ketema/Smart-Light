@@ -10,11 +10,13 @@ _state_lock = Lock()
 _state = LightState()
 
 
-def init_state(default_mode: str = "auto") -> None:
+def init_state(default_mode: str = "auto", auto_off_seconds: int = 10) -> None:
     with _state_lock:
         _state.power = "off"
         _state.brightness = 0
         _state.mode = default_mode
+        _state.sensitivity = "medium"
+        _state.timer = auto_off_seconds
         _state.last_motion_at = None
         _state.override_until = None
         _state.control_source = "system"

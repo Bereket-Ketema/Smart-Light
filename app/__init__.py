@@ -4,6 +4,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from app.routes.bridge import bridge_bp
+from app.routes.advanced_controls import advanced_controls_bp
 from app.routes.light import light_bp
 from app.routes.motion import motion_bp
 from app.routes.voice import voice_bp
@@ -20,7 +21,10 @@ def create_app() -> Flask:
     app.config["DEFAULT_MODE"] = os.getenv("DEFAULT_MODE", "auto")
     app.config["MANUAL_OVERRIDE_SECONDS"] = int(os.getenv("MANUAL_OVERRIDE_SECONDS", "30"))
 
-    init_state(default_mode=app.config["DEFAULT_MODE"])
+    init_state(
+        default_mode=app.config["DEFAULT_MODE"],
+        auto_off_seconds=app.config["AUTO_OFF_SECONDS"],
+    )
     configure(
         auto_off_seconds=app.config["AUTO_OFF_SECONDS"],
         manual_override_seconds=app.config["MANUAL_OVERRIDE_SECONDS"],
@@ -34,6 +38,7 @@ def create_app() -> Flask:
     app.register_blueprint(motion_bp)
     app.register_blueprint(voice_bp)
     app.register_blueprint(bridge_bp)
+    app.register_blueprint(advanced_controls_bp)
 
     @app.errorhandler(404)
     def not_found(_error):

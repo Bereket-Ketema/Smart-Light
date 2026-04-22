@@ -1,13 +1,18 @@
-import speech_recognition as spR
-from typing import Dict, Optional, Tuple
-from flask import current_app
 import logging
+from typing import Dict, Optional, Tuple
+
+try:
+    import speech_recognition as spR
+except ModuleNotFoundError:  # pragma: no cover
+    spR = None
 
 logger = logging.getLogger(__name__)
 
 class VoiceRecognitionService:
     
     def __init__(self):
+        if spR is None:
+            raise RuntimeError("speech_recognition is not installed")
         self.recognizer = spR.Recognizer()
         self.microphone_index = self._find_working_microphone()
         
@@ -94,9 +99,22 @@ class VoiceRecognitionService:
 # Singleton instance
 _voice_service = None
 
+class _UnavailableVoiceRecognitionService:
+    microphone_index = None
+
+    def is_available(self) -> bool:
+        return False
+
+    def process_voice_command(self) -> Tuple[Optional[str], Optional[Dict]]:
+        return None, {"success": False, "message": "Voice recognition dependency not installed"}
+
+
 def get_voice_service() -> VoiceRecognitionService:
 
     global _voice_service
     if _voice_service is None:
-        _voice_service = VoiceRecognitionService()
+        if spR is None:
+            _voice_service = _UnavailableVoiceRecognitionService()
+        else:
+            _voice_service = VoiceRecognitionService()
     return _voice_service

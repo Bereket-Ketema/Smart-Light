@@ -123,6 +123,12 @@ curl http://127.0.0.1:5000/
 - `POST /light/on`: Turn light on
 - `POST /light/off`: Turn light off
 
+#### Advanced Controls
+
+- `POST /brightness`: Set brightness (JSON: `{"brightness": 0-100}`)
+- `POST /sensitivity`: Set motion sensitivity (JSON: `{"sensitivity": "low"|"medium"|"high"}`)
+- `POST /timer`: Set auto-off timer (JSON: `{"timer": 5|10|30|60}`)
+
 #### Voice Commands
 
 - `POST /voice/command`: Process voice command (JSON: `{"command": "string"}`)

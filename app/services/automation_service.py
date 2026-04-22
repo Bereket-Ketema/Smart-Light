@@ -22,6 +22,16 @@ def configure(auto_off_seconds: int, manual_override_seconds: int) -> None:
     cancel(_AUTO_OFF_TIMER_KEY)
     cancel(_MANUAL_OVERRIDE_TIMER_KEY)
 
+def set_auto_off_seconds(auto_off_seconds: int) -> None:
+
+    global _auto_off_seconds
+    _auto_off_seconds = auto_off_seconds
+    cancel(_AUTO_OFF_TIMER_KEY)
+
+    state = get_state()
+    if state["mode"] == "auto" and state["power"] == "on":
+        _schedule_auto_off()
+
 
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
