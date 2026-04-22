@@ -34,6 +34,32 @@ Turn off:
 curl -X POST "$BASE_URL/light/off"
 ```
 
+## Advanced Controls
+
+Set brightness (0-100):
+
+```bash
+curl -X POST "$BASE_URL/brightness" \
+  -H "Content-Type: application/json" \
+  -d '{"brightness":70}'
+```
+
+Set motion sensitivity ("low" | "medium" | "high"):
+
+```bash
+curl -X POST "$BASE_URL/sensitivity" \
+  -H "Content-Type: application/json" \
+  -d '{"sensitivity":"medium"}'
+```
+
+Set auto-off timer (seconds: 5 | 10 | 30 | 60):
+
+```bash
+curl -X POST "$BASE_URL/timer" \
+  -H "Content-Type: application/json" \
+  -d '{"timer":10}'
+```
+
 ## Voice Commands
 
 Light on:
