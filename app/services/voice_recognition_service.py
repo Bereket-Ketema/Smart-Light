@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Protocol, Tuple
 
 try:
     import speech_recognition as spR
@@ -8,13 +8,25 @@ except ModuleNotFoundError:  # pragma: no cover
 
 logger = logging.getLogger(__name__)
 
+
+class VoiceService(Protocol):
+    microphone_index: Optional[int]
+    dependency_installed: bool
+    unavailable_reason: Optional[str]
+
+    def is_available(self) -> bool: ...
+    def process_voice_command(self) -> Tuple[Optional[str], Optional[Dict]]: ...
+
+
 class VoiceRecognitionService:
+    dependency_installed = True
     
     def __init__(self):
         if spR is None:
             raise RuntimeError("speech_recognition is not installed")
         self.recognizer = spR.Recognizer()
         self.microphone_index = self._find_working_microphone()
+        self.unavailable_reason = None if self.microphone_index is not None else "No microphone detected"
         
     def _find_working_microphone(self) -> Optional[int]:
 
@@ -97,10 +109,12 @@ class VoiceRecognitionService:
         return parsed["action"], parsed
 
 # Singleton instance
-_voice_service = None
+_voice_service: Optional[VoiceService] = None
 
 class _UnavailableVoiceRecognitionService:
+    dependency_installed = False
     microphone_index = None
+    unavailable_reason = "Voice recognition dependency not installed"
 
     def is_available(self) -> bool:
         return False
@@ -109,7 +123,7 @@ class _UnavailableVoiceRecognitionService:
         return None, {"success": False, "message": "Voice recognition dependency not installed"}
 
 
-def get_voice_service() -> VoiceRecognitionService:
+def get_voice_service() -> VoiceService:
 
     global _voice_service
     if _voice_service is None:

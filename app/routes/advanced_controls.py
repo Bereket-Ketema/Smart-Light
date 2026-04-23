@@ -8,7 +8,7 @@ from app.utils.response import error_response, success_response
 advanced_controls_bp = Blueprint("advanced_controls", __name__)
 
 _ALLOWED_SENSITIVITY = {"low", "medium", "high"}
-_ALLOWED_TIMER_SECONDS = {5, 10, 30, 60}
+_MIN_TIMER_SECONDS = 1
 
 
 def _parse_json() -> dict:
@@ -63,11 +63,11 @@ def set_timer():
 
     if not isinstance(timer, int):
         return error_response("Invalid timer", 422, {"detail": "`timer` must be an integer (seconds)"})
-    if timer not in _ALLOWED_TIMER_SECONDS:
+    if timer < _MIN_TIMER_SECONDS:
         return error_response(
             "Invalid timer",
             422,
-            {"detail": "`timer` must be one of: 5, 10, 30, 60"},
+            {"detail": f"`timer` must be >= {_MIN_TIMER_SECONDS} second(s)"},
         )
 
     set_auto_off_seconds(timer)

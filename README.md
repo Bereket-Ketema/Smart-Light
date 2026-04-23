@@ -127,7 +127,7 @@ curl http://127.0.0.1:5000/
 
 - `POST /brightness`: Set brightness (JSON: `{"brightness": 0-100}`)
 - `POST /sensitivity`: Set motion sensitivity (JSON: `{"sensitivity": "low"|"medium"|"high"}`)
-- `POST /timer`: Set auto-off timer (JSON: `{"timer": 5|10|30|60}`)
+- `POST /timer`: Set auto-off timer (JSON: `{"timer": >= 1}` seconds)
 
 #### Voice Commands
 

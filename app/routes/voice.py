@@ -29,10 +29,16 @@ def voice_listen():
    
     voice_service = get_voice_service()
     
+    if not voice_service.dependency_installed:
+        return error_response(
+            voice_service.unavailable_reason or "Voice recognition dependency not installed",
+            503,
+            {"error_code": "DEPENDENCY_MISSING"},
+        )
     
     if not voice_service.is_available():
         return error_response(
-            "Voice service unavailable - no microphone detected",
+            voice_service.unavailable_reason or "Voice service unavailable - no microphone detected",
             503,
             {"error_code": "MICROPHONE_NOT_FOUND"}
         )
@@ -72,10 +78,13 @@ def voice_listen():
 def voice_status():
     
     voice_service = get_voice_service()
+    microphone_detected = bool(voice_service.dependency_installed and voice_service.microphone_index is not None)
     return success_response(
         "Voice service status",
         {
             "available": voice_service.is_available(),
-            "microphone_detected": voice_service.microphone_index is not None
+            "dependency_installed": voice_service.dependency_installed,
+            "microphone_detected": microphone_detected,
+            "unavailable_reason": voice_service.unavailable_reason,
         }
     )
