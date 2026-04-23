@@ -41,22 +41,22 @@ def test_set_sensitivity_normalizes_and_persists():
 def test_set_timer_changes_auto_off_duration():
     client = _make_client()
 
-    timer_response = client.post("/timer", json={"timer": 5})
+    timer_response = client.post("/timer", json={"timer": 1})
     assert timer_response.status_code == 200
     timer_payload = timer_response.get_json()
-    assert timer_payload["data"]["timer"] == 5
+    assert timer_payload["data"]["timer"] == 1
 
     client.post("/bridge/motion-event", json={"detected": True})
-    time.sleep(5.2)
+    time.sleep(1.2)
     status_payload = client.get("/light/status").get_json()
     assert status_payload["data"]["power"] == "off"
     assert status_payload["data"]["mode"] == "auto"
-    assert status_payload["data"]["timer"] == 5
+    assert status_payload["data"]["timer"] == 1
 
 
 def test_timer_rejects_invalid_values():
     client = _make_client()
-    response = client.post("/timer", json={"timer": 12})
+    response = client.post("/timer", json={"timer": 0})
     assert response.status_code == 422
     payload = response.get_json()
     assert payload["success"] is False

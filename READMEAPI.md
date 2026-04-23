@@ -52,7 +52,7 @@ curl -X POST "$BASE_URL/sensitivity" \
   -d '{"sensitivity":"medium"}'
 ```
 
-Set auto-off timer (seconds: 5 | 10 | 30 | 60):
+Set auto-off timer (seconds: >= 1):
 
 ```bash
 curl -X POST "$BASE_URL/timer" \
