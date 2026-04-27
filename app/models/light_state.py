@@ -4,7 +4,7 @@ from typing import Optional
 
 @dataclass
 class LightState:
-    power: str = "off"
+    power: str = "on"
     brightness: int = 0
     mode: str = "auto"
     sensitivity: str = "medium"

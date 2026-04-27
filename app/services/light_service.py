@@ -7,8 +7,8 @@ def get_light_status() -> dict:
 
 
 def turn_light_on() -> dict:
-    return set_manual_power("on")
+    return set_manual_power("on", 100, "medium")
 
 
 def turn_light_off() -> dict:
-    return set_manual_power("off")
+    return set_manual_power("off", 0, "medium")
