@@ -84,12 +84,14 @@ def handle_motion_event(event: MotionEvent) -> dict:
     return updated
 
 
-def set_manual_power(power: str) -> dict:
+def set_manual_power(power: str, brightness: int, sensitivity: str) -> dict:
 
     override_until = (datetime.now(timezone.utc) + timedelta(seconds=_manual_override_seconds)).isoformat()
     cancel(_AUTO_OFF_TIMER_KEY)
     updated = update_state(
         power=power,
+        brightness=brightness,
+        sensitivity=sensitivity,
         mode="manual",
         override_until=override_until,
         control_source="manual",
