@@ -1,25 +1,17 @@
-from dataclasses import dataclass
+# app/models/motion_event.py
+
 from datetime import datetime, timezone
-from typing import Any, Dict
+from typing import Optional
 
-
-@dataclass
 class MotionEvent:
-    detected: bool
-    timestamp: str
-
+    def __init__(self, detected: bool, timestamp: Optional[str] = None):
+        self.detected = detected
+        self.timestamp = timestamp or datetime.now(timezone.utc).isoformat()
+    
     @classmethod
-    def from_payload(cls, payload: Dict[str, Any]) -> "MotionEvent":
-        detected = payload.get("detected")
-        if not isinstance(detected, bool):
-            raise ValueError("`detected` must be a boolean value")
-        if not detected:
-            raise ValueError("only detected=true events are supported")
-
+    def from_payload(cls, payload: dict):
+        detected = payload.get("detected", False)
+        if isinstance(detected, str):
+            detected = detected.lower() in ["true", "1", "yes"]
         timestamp = payload.get("timestamp")
-        if timestamp is None:
-            timestamp = datetime.now(timezone.utc).isoformat()
-        if not isinstance(timestamp, str):
-            raise ValueError("`timestamp` must be a string when provided")
-
         return cls(detected=detected, timestamp=timestamp)
