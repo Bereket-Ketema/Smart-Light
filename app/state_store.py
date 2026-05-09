@@ -1,35 +1,44 @@
-"""Shared in-memory state for the Smart Light app."""
+# app/state_store.py
 
-from threading import Lock
-from typing import Any
+from datetime import datetime, timezone
+from typing import Any, Dict, Optional
 
-from app.models.light_state import LightState
-
-
-_state_lock = Lock()
-_state = LightState()
-
+_state: Dict[str, Any] = {}
 
 def init_state(default_mode: str = "auto", auto_off_seconds: int = 10) -> None:
-    with _state_lock:
-        _state.power = "off"
-        _state.brightness = 0
-        _state.mode = default_mode
-        _state.sensitivity = "medium"
-        _state.timer = auto_off_seconds
-        _state.last_motion_at = None
-        _state.override_until = None
-        _state.control_source = "system"
+    """Initialize the global state"""
+    global _state
+    _state = {
+        "power": "off",
+        "mode": default_mode,
+        "brightness": 70,
+        "sensitivity": "medium",
+        "timer": auto_off_seconds,
+        "last_motion_at": None,
+        "override_until": None,
+        "control_source": "init",
+    }
+    print(f"🟢 [STATE] Initialized: power=off, mode={default_mode}, brightness=70, sensitivity=medium, timer={auto_off_seconds}")
 
+def get_state() -> Dict[str, Any]:
+    """Get current state"""
+    return _state.copy()
 
-def get_state() -> dict[str, Any]:
-    with _state_lock:
-        return _state.to_dict()
-
-
-def update_state(**kwargs: Any) -> dict[str, Any]:
-    with _state_lock:
-        for key, value in kwargs.items():
-            if hasattr(_state, key):
-                setattr(_state, key, value)
-        return _state.to_dict()
+def update_state(**kwargs) -> Dict[str, Any]:
+    """Update state with given key-value pairs"""
+    global _state
+    _state.update(kwargs)
+    
+    # Log significant changes
+    if "power" in kwargs:
+        print(f"🟡 [STATE] Power changed to: {kwargs['power']}")
+    if "mode" in kwargs:
+        print(f"🟡 [STATE] Mode changed to: {kwargs['mode']}")
+    if "brightness" in kwargs:
+        print(f"🟡 [STATE] Brightness changed to: {kwargs['brightness']}%")
+    if "sensitivity" in kwargs:
+        print(f"🟡 [STATE] Sensitivity changed to: {kwargs['sensitivity']}")
+    if "timer" in kwargs:
+        print(f"🟡 [STATE] Timer changed to: {kwargs['timer']} seconds")
+    
+    return _state.copy()
