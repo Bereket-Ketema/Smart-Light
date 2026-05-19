@@ -14,6 +14,42 @@ def _parse_json() -> dict:
     payload = request.get_json(silent=True)
     return payload if isinstance(payload, dict) else {}
 
+@advanced_controls_bp.get("/brightness")
+def get_brightness():
+    from app.state_store import get_state
+    print("🔵 [ADVANCED] GET /brightness - Request received")
+    state = get_state()
+    brightness = state.get("brightness", 70)
+    print(f"🟢 [ADVANCED] Current brightness: {brightness}%")
+    return success_response(
+        "Brightness retrieved",
+        {"brightness": brightness},
+    )
+
+@advanced_controls_bp.get("/sensitivity")
+def get_sensitivity():
+    from app.state_store import get_state
+    print("🔵 [ADVANCED] GET /sensitivity - Request received")
+    state = get_state()
+    sensitivity = state.get("sensitivity", "medium")
+    print(f"🟢 [ADVANCED] Current sensitivity: {sensitivity}")
+    return success_response(
+        "Sensitivity retrieved",
+        {"sensitivity": sensitivity},
+    )
+
+@advanced_controls_bp.get("/timer")
+def get_timer():
+    from app.state_store import get_state
+    print("🔵 [ADVANCED] GET /timer - Request received")
+    state = get_state()
+    timer = state.get("timer", 10)
+    print(f"🟢 [ADVANCED] Current timer: {timer} seconds")
+    return success_response(
+        "Timer retrieved",
+        {"timer": timer},
+    )
+
 @advanced_controls_bp.post("/brightness")
 def set_brightness():
     print("🔵 [ADVANCED] POST /brightness - Request received")
@@ -34,15 +70,7 @@ def set_brightness():
         {"status": "success", "brightness": updated["brightness"]},
     )
 
-@advanced_controls_bp.get("/brightness")
-def get_brightness():
-    print("🔵 [ADVANCED] GET /brightness - Request received")
-    state = get_state()
-    print(f"🟢 [ADVANCED] Current brightness: {state.get('brightness', 70)}%")
-    return success_response(
-        "Brightness retrieved",
-        {"brightness": state.get("brightness", 70)},
-    )
+
 
 @advanced_controls_bp.post("/sensitivity")
 def set_sensitivity():
@@ -70,15 +98,7 @@ def set_sensitivity():
         {"status": "success", "sensitivity": updated["sensitivity"]},
     )
 
-@advanced_controls_bp.get("/sensitivity")
-def get_sensitivity():
-    print("🔵 [ADVANCED] GET /sensitivity - Request received")
-    state = get_state()
-    print(f"🟢 [ADVANCED] Current sensitivity: {state.get('sensitivity', 'medium')}")
-    return success_response(
-        "Sensitivity retrieved",
-        {"sensitivity": state.get("sensitivity", "medium")},
-    )
+
 
 @advanced_controls_bp.post("/timer")
 def set_timer():
@@ -103,14 +123,4 @@ def set_timer():
     return success_response(
         "Auto-off timer updated",
         {"status": "success", "timer": updated["timer"]},
-    )
-
-@advanced_controls_bp.get("/timer")
-def get_timer():
-    print("🔵 [ADVANCED] GET /timer - Request received")
-    state = get_state()
-    print(f"🟢 [ADVANCED] Current timer: {state.get('timer', 10)} seconds")
-    return success_response(
-        "Timer retrieved",
-        {"timer": state.get("timer", 10)},
     )
