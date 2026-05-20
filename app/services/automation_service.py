@@ -77,10 +77,11 @@ def _expire_manual_override_if_needed() -> None:
     if state["mode"] != "manual":
         print(f"🟡 [AUTO] Mode is {state['mode']}, not switching")
         return
-    print("🟢 [AUTO] Switching from manual to auto mode")
-    update_state(mode="auto", override_until=None, control_source="manual_timeout")
-    if state["power"] == "on":
-        _schedule_auto_off()
+    # ✅ FIX: Keep manual mode until user explicitly switches to auto
+    # Do NOT automatically revert to auto mode
+    print("🟡 [AUTO] Manual override expired, but keeping manual mode (user must explicitly switch)")
+    update_state(override_until=None, control_source="manual_timeout")
+    # Do NOT schedule auto-off - light should stay in its current state
 
 
 def _should_detect_motion(sensitivity: str) -> bool:
