@@ -13,5 +13,7 @@ class MotionEvent:
         detected = payload.get("detected", False)
         if isinstance(detected, str):
             detected = detected.lower() in ["true", "1", "yes"]
+        if detected is not True:
+            raise ValueError("`detected` must be true")
         timestamp = payload.get("timestamp")
         return cls(detected=detected, timestamp=timestamp)

@@ -28,7 +28,7 @@ def post_brightness():
     
     updated = update_state(brightness=brightness, control_source="manual")
     print(f"🟢 [ADVANCED] Brightness set to {updated['brightness']}%")
-    return success_response("Brightness updated", {"brightness": updated["brightness"]})
+    return success_response("Brightness updated", {"status": "success", "brightness": updated["brightness"]})
 
 @advanced_controls_bp.get("/brightness")
 def get_brightness():

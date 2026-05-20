@@ -62,6 +62,24 @@ curl -X POST "$BASE_URL/timer" \
 
 ## Voice Commands
 
+For a React Expo app, listen on the phone and send the recognized transcript to
+`POST /voice/command`. The backend executes the command immediately and does not
+store command history.
+
+Enable voice-control session mode:
+
+```bash
+curl -X POST "$BASE_URL/voice/control" \
+  -H "Content-Type: application/json" \
+  -d '{"enabled":true}'
+```
+
+Check voice-control session mode:
+
+```bash
+curl -X GET "$BASE_URL/voice/status"
+```
+
 Light on:
 
 ```bash
@@ -84,6 +102,13 @@ Auto mode:
 curl -X POST "$BASE_URL/voice/command" \
   -H "Content-Type: application/json" \
   -d '{"command":"auto mode"}'
+```
+
+Optional server microphone listen, only useful if the Flask machine has a
+working microphone and voice dependencies installed:
+
+```bash
+curl -X POST "$BASE_URL/voice/listen"
 ```
 
 ## Motion Simulation

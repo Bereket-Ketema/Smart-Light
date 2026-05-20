@@ -132,6 +132,9 @@ curl http://127.0.0.1:5000/
 #### Voice Commands
 
 - `POST /voice/command`: Process voice command (JSON: `{"command": "string"}`)
+- `POST /voice/control`: Enable/disable temporary voice session mode (JSON: `{"enabled": true|false}`)
+- `GET /voice/status`: Get temporary voice session status
+- `POST /voice/listen`: Optional server-microphone listen and execute endpoint
 
 #### Motion
 
@@ -204,7 +207,9 @@ All responses use this shape:
 - CORS is enabled for local development.
 - RN app can poll `GET /light/status` to keep UI synchronized.
 - Manual buttons map directly to `POST /light/on` and `POST /light/off`.
-- Voice input text maps to `POST /voice/command`.
+- Voice-control toggle maps to `POST /voice/control`.
+- Expo should listen on the phone, then send recognized text to `POST /voice/command`.
+- The backend executes voice commands immediately and keeps only temporary session state while the Flask process is running.
 - Motion simulator/hardware bridge can send `POST /bridge/motion-event`.
 
 ## Run Tests

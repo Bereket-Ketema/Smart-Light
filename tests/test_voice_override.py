@@ -33,6 +33,33 @@ def test_voice_auto_mode_reenables_automation():
     assert auto_payload["data"]["state"]["mode"] == "auto"
 
 
+def test_voice_control_toggle_is_temporary_session_state():
+    client = _make_client()
+
+    enable_response = client.post("/voice/control", json={"enabled": True})
+    assert enable_response.status_code == 200
+    enable_payload = enable_response.get_json()
+    assert enable_payload["data"]["active"] is True
+
+    status_payload = client.get("/voice/status").get_json()
+    assert status_payload["data"]["active"] is True
+
+    disable_response = client.post("/voice/control", json={"enabled": False})
+    assert disable_response.status_code == 200
+    disable_payload = disable_response.get_json()
+    assert disable_payload["data"]["active"] is False
+
+
+def test_voice_command_accepts_natural_phrase_from_mobile_transcript():
+    client = _make_client()
+
+    voice_response = client.post("/voice/command", json={"command": "turn the light on"})
+    assert voice_response.status_code == 200
+    voice_payload = voice_response.get_json()
+    assert voice_payload["data"]["action"] == "LIGHT_ON"
+    assert voice_payload["data"]["state"]["power"] == "on"
+
+
 def test_manual_override_expires_back_to_auto():
     client = _make_client()
     client.post("/voice/command", json={"command": "light off"})
