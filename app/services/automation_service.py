@@ -108,13 +108,9 @@ def handle_motion_event(event: MotionEvent) -> dict:
     if state["mode"] != "auto":
         print(f"🟡 [AUTO] Mode is {state['mode']}, ignoring motion (auto mode required)")
         return updated
-    
-    # Check sensitivity
-    sensitivity = state.get("sensitivity", "medium")
-    if not _should_detect_motion(sensitivity):
-        print(f"🟡 [AUTO] Motion ignored due to sensitivity setting ({sensitivity})")
-        return updated
-    
+
+    # Explicit motion simulation/hardware payloads should turn the light on when detected.
+    # Sensitivity is still stored in state, but it should not randomly suppress a valid motion event.
     if not event.detected:
         print("🟡 [AUTO] Motion event: detected=False, ignoring")
         return updated

@@ -4,4 +4,6 @@ from app.services.automation_service import handle_motion_event
 
 def process_motion_payload(payload: dict) -> dict:
     event = MotionEvent.from_payload(payload)
+    if not event.detected:
+        raise ValueError("`detected` must be true for a motion event")
     return handle_motion_event(event)
